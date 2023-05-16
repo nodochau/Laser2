@@ -33,6 +33,63 @@ my_color = ("white", '#252525')
 textColor = '#F9F54B'
 button_color = '#0081B4'
 
+class DeleteMaterial(customtkinter.CTkToplevel):
+  def __init__(self, **kwargs):
+    self.app = ControlData()
+    super().__init__(**kwargs)
+    self.title('DELETE MATERIAL')
+    self.geometry('350x200+200+400')
+    for i in range(3):
+      self.grid_rowconfigure(i, weight=1)
+    self.font = customtkinter.CTkFont(None, 16)
+
+    self.pwEntry = customtkinter.CTkEntry(self,
+                                           width=250,
+                                           height=35,
+                                           border_width=1,
+                                           border_color='red',
+                                           corner_radius=20,
+                                           fg_color=my_color,
+                                           justify='center',
+                                           placeholder_text='Enter Password Here',
+                                           font=self.font
+                                           )
+    self.pwEntry.grid(row=0, column=0, pady=5, padx=50, sticky='EW')
+
+    self.matEntry = customtkinter.CTkEntry(self,
+                                           width=250,
+                                           height=35,
+                                           border_width=1,
+                                           border_color='red',
+                                           corner_radius=20,
+                                           fg_color=my_color,
+                                           justify='center',
+                                           placeholder_text='Enter Material Number Here',
+                                           font=self.font
+                                           )
+    self.matEntry.grid(row=1, column=0, pady=5, padx=50, sticky='EW')
+    self.deleteBtn = customtkinter.CTkButton(self,
+                                            text='DELETE MATERIAL',
+                                            width=250, height=35,
+                                            corner_radius=25,
+                                            font=self.font,
+                                            fg_color=button_color,
+                                            command=self.deleteMat)
+    self.deleteBtn.grid(row=2, column=0, pady=5, padx=50, sticky='EW')
+    
+  def deleteMat(self):
+    pw = self.pwEntry.get()
+    if pw == '' or pw != '0011':
+      messagebox.showerror('INVALID PASSWORD', 'PLEASE ENTER PASSWORD OR INVALID PASSWORD')
+    else:
+      mat = self.matEntry.get()
+      if mat == '':
+        messagebox.showerror('INVALID DATA', 'PLEASE ENTER MATERIAL NUMBER')
+      else:
+        mat = int(mat)
+        if self.app.deleteMaterial(mat):
+          self.destroy()
+
 
 class Setup_Program(customtkinter.CTkToplevel):
   def __init__(self, arduino, window=None, **kwargs):
@@ -124,17 +181,45 @@ class Setup_Program(customtkinter.CTkToplevel):
                                            )
     self.yEntry.grid(row=2, column=1, pady=10, padx=40)
 
-    self.homePartPos = customtkinter.CTkButton(self.frame1, text='MANUALLY ENTER POS', width=250, height=35, corner_radius=25, font=self.font, fg_color=button_color, command=self.sendManualPositions)
+    self.homePartPos = customtkinter.CTkButton(self.frame1,
+                                              text='MANUALLY ENTER POS',
+                                              width=250, height=35,
+                                              corner_radius=25,
+                                              font=self.font,
+                                              fg_color=button_color,
+                                              command=self.sendManualPositions)
     self.homePartPos.grid(row=3, column=0, pady=10, padx=40)
-    self.savePos = customtkinter.CTkButton(self.frame1, text='SAVE POSITION', width=250, height=35, corner_radius=25, font=self.font, fg_color=button_color, command=self.savePosition)
+
+    self.savePos = customtkinter.CTkButton(self.frame1,
+                                          text='SAVE POSITION',
+                                          width=250, height=35,
+                                          corner_radius=25,
+                                          font=self.font,
+                                          fg_color=button_color,
+                                          command=self.savePosition)
     self.savePos.grid(row=3, column=1, pady=10, padx=40)
-    self.homeMachine = customtkinter.CTkButton(self.frame1, text='HOME MACHINE', width=250, height=35, corner_radius=25, font=self.font, fg_color=button_color, command=self.homingMachine)
+
+    self.homeMachine = customtkinter.CTkButton(self.frame1,
+                                              text='HOME MACHINE',
+                                              width=250, height=35,
+                                              corner_radius=25,
+                                              font=self.font,
+                                              fg_color=button_color,
+                                              command=self.homingMachine)
     self.homeMachine.grid(row=4, column=0, pady=10, padx=40)
-    self.finish = customtkinter.CTkButton(self.frame1, text='FINISH SETUP', width=250, height=35, corner_radius=25, font=self.font, fg_color=button_color, command=self.finishSetup)
+
+    self.finish = customtkinter.CTkButton(self.frame1,
+                                          text='FINISH SETUP',
+                                          width=250, height=35,
+                                          corner_radius=25,
+                                          font=self.font,
+                                          fg_color=button_color,
+                                          command=self.finishSetup)
     self.finish.grid(row=4, column=1, pady=10, padx=40)
 
   
     self.switch_var = customtkinter.StringVar(value="off")
+
     self.switch = customtkinter.CTkSwitch(self.frame1,
                                           text="TURN LASER OFF/ON",
                                           corner_radius=25,
@@ -147,42 +232,78 @@ class Setup_Program(customtkinter.CTkToplevel):
                                           onvalue="on",
                                           offvalue="off"
                                           )
-    self.switch.grid(row=5, column=0, columnspan=2, padx=50, pady=10)   
+    self.switch.grid(row=5, column=0, padx=40, pady=10) 
+    
+    self.delete_mat = customtkinter.CTkButton(self.frame1,
+                                          text='DELETE MATERIAL',
+                                          width=250, height=35,
+                                          corner_radius=25,
+                                          font=self.font,
+                                          fg_color=button_color,
+                                          command=self.deleteMat)
+    self.delete_mat.grid(row=5, column=1, pady=10, padx=40)
 
   #----------------------------Moving direction buttons--------------------------------
-    self.yPlus = customtkinter.CTkButton(master=self.frame2, image=y_plus, width=150, height=10, text="", fg_color='#252525')
+    self.yPlus = customtkinter.CTkButton(master=self.frame2,
+                                        image=y_plus,
+                                        width=150, height=10,
+                                        text="", fg_color='#252525')
     self.yPlus.grid(row=0, column=2, pady=5)
     self.yPlus.bind('<ButtonPress-1>', self.jogYPlus)
     self.yPlus.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.yMinus = customtkinter.CTkButton(master=self.frame2, image=y_minus, width=150, height=10, text="", fg_color='#252525')
+    self.yMinus = customtkinter.CTkButton(master=self.frame2,
+                                        image=y_minus,
+                                        width=150, height=10,
+                                        text="", fg_color='#252525')
     self.yMinus.grid(row=4, column=2, pady=5)
     self.yMinus.bind('<ButtonPress-1>', self.jogYMinus)
     self.yMinus.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.xPlus = customtkinter.CTkButton(master=self.frame2, image=x_plus, width=150, height=10, text="", fg_color='#252525')
+    self.xPlus = customtkinter.CTkButton(master=self.frame2,
+                                        image=x_plus,
+                                        width=150, height=10,
+                                        text="", fg_color='#252525')
     self.xPlus.grid(row=2, column=4, pady=5)
     self.xPlus.bind('<ButtonPress-1>', self.jogxPlus)
     self.xPlus.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.xMinus = customtkinter.CTkButton(master=self.frame2, image=x_minus, width=150, height=10, text="", fg_color='#252525')
+    self.xMinus = customtkinter.CTkButton(master=self.frame2,
+                                          image=x_minus,
+                                          width=150, height=10,
+                                          text="", fg_color='#252525')
     self.xMinus.grid(row=2, column=0, pady=5)
     self.xMinus.bind('<ButtonPress-1>', self.jogxMinus)
     self.xMinus.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.x45 = customtkinter.CTkButton(master=self.frame2, image=x_45, width=150, height=10, text="", fg_color='#252525')
+    self.x45 = customtkinter.CTkButton(master=self.frame2,
+                                      image=x_45,
+                                      width=150, height=10,
+                                      text="", fg_color='#252525')
     self.x45.grid(row=1, column=3, pady=5)
     self.x45.bind('<ButtonPress-1>', self.jogx45)
     self.x45.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.x135 = customtkinter.CTkButton(master=self.frame2, image=x_135, width=150, height=10, text="", fg_color='#252525')
+    self.x135 = customtkinter.CTkButton(master=self.frame2,
+                                      image=x_135, 
+                                      width=150, height=10, 
+                                      text="", fg_color='#252525')
     self.x135.grid(row=1, column=1, pady=5)
     self.x135.bind('<ButtonPress-1>', self.jogx135)
     self.x135.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.x225 = customtkinter.CTkButton(master=self.frame2, image=x_225, width=150, height=10, text="", fg_color='#252525')
+    self.x225 = customtkinter.CTkButton(master=self.frame2,
+                                      image=x_225, width=150,
+                                      height=10, text="",
+                                      fg_color='#252525')
     self.x225.grid(row=3, column=1, pady=5)
     self.x225.bind('<ButtonPress-1>', self.jogx225)
     self.x225.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.x315 = customtkinter.CTkButton(master=self.frame2, image=x_315, width=150, height=10, text="", fg_color='#252525')
+    self.x315 = customtkinter.CTkButton(master=self.frame2,
+                                        image=x_315,
+                                        width=150, height=10,
+                                        text="", fg_color='#252525')
     self.x315.grid(row=3, column=3, pady=5)
     self.x315.bind('<ButtonPress-1>', self.jogx315)
     self.x315.bind('<ButtonRelease-1>', self.stopJogMotor)
-    self.coordinate = customtkinter.CTkButton(master=self.frame2, image=coordinate, width=150, height=10, text="", fg_color='#252525')
+    self.coordinate = customtkinter.CTkButton(master=self.frame2,
+                                              image=coordinate,
+                                              width=150, height=10,
+                                              text="", fg_color='#252525')
     self.coordinate.grid(row=2, column=2, pady=5)
     self.protocol('WM_DELETE_WINDOW', self.disabledClosingWindow)
     self.after(100, self.showing_position)
@@ -191,6 +312,10 @@ class Setup_Program(customtkinter.CTkToplevel):
 
   def disabledClosingWindow(self):
     pass
+
+  def deleteMat(self):
+    del_app = DeleteMaterial()
+    del_app.focus_force()
 
 
   def switch_event(self):
@@ -285,33 +410,6 @@ class Setup_Program(customtkinter.CTkToplevel):
     else:
       messagebox.showerror('MISSING INFO', 'PLEASE ENTER MATERIAL NUMBER')
 
-
-  # def writeData(self, mat, xpos, ypos):
-    
-    # try:
-    #   with open(self.dataFile, 'r') as rf:
-    #     rf.readline()
-    # except FileNotFoundError:
-    #   with open(self.dataFile, 'a') as wf:
-    #     print('MATERIAL', 'XPOS', 'YPOS', sep=',', file=wf)
-    #     print(mat, xpos, ypos, sep=',', file=wf)
-    # else:
-    #   with open(self.dataFile, 'a') as wf:
-    #     data = self.readData()[0]
-    #     matList = self.readData()[1]
-    #     if int(mat) in matList:
-    #       answer = messagebox.askquestion('MATERIAL NUMBER STATUS', 'MATERIAL NUMBER IS EXISTED. DO YOU WANT TO OVERRIDE IT?')
-    #       if answer == 'yes':
-    #         index = matList.index(int(mat))
-    #         data._set_value(index, 'XPOS', xpos)
-    #         data._set_value(index, 'YPOS', ypos)
-    #         data.to_csv(self.dataFile, index=False)
-    #         messagebox.showinfo('SAVE DATA', f'MATERIAL: {mat} POSITIONS ARE UPDATED SUCCESSFULLY!')
-
-    #     else:
-    #       print(mat, xpos, ypos, sep=',', file=wf)
-    #       messagebox.showinfo('SAVE DATA', 'POSITIONS ARE RECORDED SUCCESSFULLY!')
-
   def readMotorPosition(self, data):
     motorPos = {} # store motor positions
     xtemp = ''
@@ -400,4 +498,5 @@ if __name__ == '__main__':
     print("{} is ready connected".format(arduino.port))
   app = Setup_Program(arduino)
   app.mainloop()
- 
+  # app = DeleteMaterial()
+  # app.mainloop()

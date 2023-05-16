@@ -43,7 +43,7 @@ class ControlData:
     with closing(sqlite3.connect(resource_path('material_data.db'))) as connection:
       with closing(connection.cursor()) as cursor:
         if len(self.getData(mat)) > 0:
-          if status == None and operator == None: #Update at Setup
+          if operator == None: #Update at Setup
             cursor.execute('UPDATE mat_records SET (Xpos, Ypos) = (?, ?) WHERE Material=?',(x, y, mat))
           else:
             if x == None and y == None: # Update at run program to check out or in
@@ -59,14 +59,27 @@ class ControlData:
     today = datetime.datetime.now().strftime('%Y-%m-%d')
     with closing(sqlite3.connect(resource_path('material_data.db'))) as connection:
       with closing(connection.cursor()) as cursor:
-        cursor.execute('CREATE TABLE IF NOT EXISTS checkout_records (Material int, Operator varchar, Date varchar)')
-        cursor.execute('INSERT INTO checkout_records (Material, Operator, Date) VALUES (?, ?, ?)', (mat, name, today))
+        cursor.execute('CREATE TABLE IF NOT EXISTS mat_records (Material int, Operator varchar, Date varchar)')
+        cursor.execute('INSERT INTO mat_records (Material, Operator, Date) VALUES (?, ?, ?)', (mat, name, today))
         cursor.execute('COMMIT')
         if len(self.getData(mat)) > 0:
           status = 'CHECKED-OUT'
           cursor.execute('UPDATE mat_records SET Status = ? WHERE Material=?',(status, mat))
           cursor.execute('COMMIT')
         messagebox.showinfo('CHECK OUT PROCESS', 'CHECKOUT COMPLETED SUCCESSFULLY!')
+
+
+  def deleteMaterial(self, mat):
+    with closing(sqlite3.connect(resource_path('material_data.db'))) as connection:
+      with closing(connection.cursor()) as cursor:
+        if len(self.getData(mat)) > 0:
+          cursor.execute('DELETE FROM mat_records WHERE Material=?', (mat,))
+          cursor.execute('COMMIT')
+          messagebox.showinfo('DELETE MATERIAL', 'DELETION COMPLETED SUCCESSFULLY!')
+          return True
+        else:
+          print('Material number not exist in database')
+          return False
 
 
   def deleteTable(self, table_name):
@@ -79,7 +92,7 @@ class ControlData:
 if __name__ == '__main__':
   app = ControlData()         
   print(app.getData(1234))
-  app.deleteTable('checkout_records')
+  app.deleteMaterial(1111)
 #addData(3456, 700, 800, 'AVAILABLE')
 
 # data = cursor.execute('SELECT * FROM mat_records').fetchall()
