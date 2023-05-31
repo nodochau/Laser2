@@ -303,12 +303,22 @@ class Setup_Program(customtkinter.CTkToplevel):
     self.coordinate = customtkinter.CTkButton(master=self.frame2,
                                               image=coordinate,
                                               width=150, height=10,
-                                              text="", fg_color='#252525')
+                                              text="", fg_color='#252525',
+                                              command=self.setZero)
     self.coordinate.grid(row=2, column=2, pady=5)
     self.protocol('WM_DELETE_WINDOW', self.disabledClosingWindow)
     self.after(100, self.showing_position)
     self.after(500, self.flashHomeBtn)
 
+  def setZero(self):
+    # This function to set zero position for material/position 0000 incase the machine is moved and it is not at the 
+    # zero position at first installing.
+    self.matEntry.delete(0, customtkinter.END)
+    self.matEntry.insert(0, '0000')
+    self.xEntry.delete(0, customtkinter.END)
+    self.xEntry.insert(0, '0')
+    self.yEntry.delete(0, customtkinter.END)
+    self.yEntry.insert(0, '0')
 
   def disabledClosingWindow(self):
     pass

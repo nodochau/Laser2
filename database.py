@@ -1,4 +1,6 @@
 import sqlite3
+import csv
+import pandas as pd
 from contextlib import closing
 from tkinter import messagebox
 import datetime
@@ -31,6 +33,11 @@ class ControlData:
           if answer == 'yes':
             self.updateData(mat, x, y, status)
             messagebox.showinfo('SAVE DATA', f'MATERIAL: {mat} POSITIONS ARE UPDATED SUCCESSFULLY!')
+
+  def getAllData(self):
+    with closing(sqlite3.connect(resource_path('material_data.db'))) as connection:
+      with closing(connection.cursor()) as cursor:
+        return cursor.execute('SELECT * FROM mat_records').fetchall()
 
 
   def getData(self, mat):
@@ -88,11 +95,22 @@ class ControlData:
         cursor.execute(f'DROP TABLE IF EXISTS {table_name}')
 
 
+  def createCSV_ExcelFile(self):
+    # writer = csv.writer(open('material_data_csv.csv', 'w'))
+    # writer.writerow(['Material', 'XPos', 'YPos', 'Status', 'Operator'])
+    # datas = self.getAllData()
+    # for data in datas:
+    #   writer.writerow([data[0], data[1], data[2], data[3], data[4]])
+    with closing(sqlite3.connect(resource_path('material_data.db'))) as connection:
+      with closing(connection.cursor()) as cursor:
+        datas = pd.read_sql('SELECT * FROM mat_records', connection)
+        datas.to_csv('materialData.csv', index=False)
+        datas.to_excel('materialData.xlsx', index=False)
     
 if __name__ == '__main__':
   app = ControlData()         
-  print(app.getData(1234))
-  app.deleteMaterial(1111)
+  print(app.createCSV_ExcelFile())
+  
 #addData(3456, 700, 800, 'AVAILABLE')
 
 # data = cursor.execute('SELECT * FROM mat_records').fetchall()

@@ -7,12 +7,12 @@ from setupProgram import Setup_Program
 from database import ControlData
 from multipleMaterial import MultipleMaterial
 import os, sys
+
 """
   This program to control the movement of laser to turn the relay on/off
   The timer is set with function 2 and the out put is NO and COM
   X1 connect to DO of light sensor
 """
-
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
@@ -41,7 +41,6 @@ def resource_path(relative_path):
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
-
     return os.path.join(base_path, relative_path)
 
 
@@ -51,7 +50,6 @@ def positionMainScreen(window, appWidth, appHeight):
   window.geometry(f'{appWidth}x{appHeight}+{x+100}+{y}')
 
 
-
 def Flashing ():
   global greenFlashSignal
   if arduino.inWaiting()>0:
@@ -59,8 +57,7 @@ def Flashing ():
     line = line.strip()
     if ('X' in line ) or ('Y' in line):
       greenFlashSignal = 0
-      operatorEntry.delete(0, customtkinter.END)
-    
+      operatorEntry.delete(0, customtkinter.END)    
   else:
     pass
   if greenFlashSignal == 1:
